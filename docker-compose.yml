@@ -1,0 +1,49 @@
+version: '3'
+services:
+    postgres:
+        image: 'postgres:alpine'
+        restart: on-failure
+        ports:
+            - '${DB_PORT:-5432}:5432'
+        environment:
+            POSTGRES_USER: '${DB_USERNAME}'
+            POSTGRES_PASSWORD: '${DB_PASSWORD}'
+            POSTGRES_DB: '${DB_DATABASE}'
+        volumes:
+            - 'bookingpg:/var/lib/postgresql/data'
+        networks:
+            - booking
+    adminer:
+        image: adminer
+        restart: on-failure
+        ports:
+            - 8080:8080
+        environment: 
+            ADMINER_DEFAULT_SERVER: postgres
+        networks: 
+            - booking
+    # redis:
+    #     image: 'redis:alpine'
+    #     restart: on-failure
+    #     ports:
+    #         - '${FORWARD_REDIS_PORT:-6379}:6379'
+    #     volumes:
+    #         - 'bookingredis:/data'
+    #     networks:
+    #         - booking
+    # mailhog:
+    #     image: 'mailhog/mailhog:latest'
+    #     restart: on-failure
+    #     ports:
+    #         - 1025:1025
+    #         - 8025:8025
+    #     networks:
+    #         - booking
+networks:
+    booking:
+        driver: bridge
+volumes:
+    bookingpg:
+        driver: local
+    # bookingredis:
+    #     driver: local
